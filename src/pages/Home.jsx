@@ -35,7 +35,6 @@ export default function Home() {
     text: darkMode ? "#e5e7eb" : "#020617",
     muted: darkMode ? "#94a3b8" : "#64748b",
     frame: darkMode ? "#020617" : "#f8fafc",
-    accent: "#2563eb",
   };
 
   /* ================= FILTER ================= */
@@ -56,7 +55,7 @@ export default function Home() {
       {/* ================= HERO ================= */}
       <div
         id="heroCarousel"
-        className="carousel slide carousel-fade"
+        className="carousel slide carousel-fade hero-carousel"
         data-bs-ride="carousel"
       >
         <div className="carousel-inner">
@@ -70,19 +69,11 @@ export default function Home() {
               <img
                 src={img}
                 alt="Luxury Cars"
-                className="d-block w-100"
-                style={{ height: "100vh", objectFit: "cover" }}
+                className="d-block w-100 hero-img"
               />
 
               {/* Overlay */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(to bottom, rgba(0,0,0,.45), rgba(0,0,0,.75))",
-                }}
-              />
+              <div className="hero-overlay" />
 
               <div className="carousel-caption text-start">
                 <h1 className="fw-bold display-4">
@@ -93,7 +84,6 @@ export default function Home() {
                   Luxury • Performance • Comfort
                 </p>
 
-                {/* 🔥 Explore Button */}
                 <a
                   href="#collection"
                   className="btn btn-warning btn-lg px-4 rounded-pill fw-semibold"
@@ -294,10 +284,49 @@ export default function Home() {
         )}
       </div>
 
-      {/* SMOOTH SCROLL */}
+      {/* ================= STYLES ================= */}
       <style>{`
         html {
           scroll-behavior: smooth;
+        }
+
+        /* HERO FIX */
+        .hero-carousel,
+        .hero-carousel .carousel-item {
+          min-height: 100svh;
+        }
+
+        .hero-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        .hero-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,.45),
+            rgba(0,0,0,.75)
+          );
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+          .hero-carousel,
+          .hero-carousel .carousel-item {
+            min-height: 85svh;
+          }
+
+          .hero-img {
+            object-position: center top;
+          }
+
+          .carousel-caption h1 {
+            font-size: 2.2rem;
+          }
         }
       `}</style>
     </div>
