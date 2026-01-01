@@ -12,15 +12,23 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
       if (u) {
-        const snap = await getDoc(doc(db, "users", u.uid));
-        setRole(snap.data()?.role);
+        // 🔥 CRITICAL FIX: force refresh user profile
+        await u.reload();
+
+        const freshUser = auth.currentUser;
+        setUser(freshUser);
+
+        const snap = await getDoc(doc(db, "users", freshUser.uid));
+        setRole(snap.exists() ? snap.data().role : "customer");
       } else {
+        setUser(null);
         setRole(null);
       }
+
       setLoading(false);
     });
+
     return () => unsub();
   }, []);
 

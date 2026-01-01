@@ -1,18 +1,25 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const register = async () => {
-    if (!email || !password) {
+    if (!name || !mobile || !email || !password) {
       alert("Please fill all fields");
+      return;
+    }
+
+    if (mobile.length !== 10) {
+      alert("Mobile number must be 10 digits");
       return;
     }
 
@@ -26,13 +33,21 @@ export default function Register() {
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
 
+      await updateProfile(res.user, {
+        displayName: name,
+      });
+
       await setDoc(doc(db, "users", res.user.uid), {
+        name,
+        mobile,
         email,
         role: "customer",
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
       });
 
       alert("Registration successful");
+
+      // ✅ REDIRECT TO LOGIN
       navigate("/");
     } catch (error) {
       alert(error.message);
@@ -48,8 +63,6 @@ export default function Register() {
     >
       <div className="card shadow-lg" style={{ maxWidth: "900px", width: "100%" }}>
         <div className="row g-0">
-
-          {/* LEFT IMAGE */}
           <div className="col-md-6 d-none d-md-block position-relative">
             <img
               src="https://images.unsplash.com/photo-1498050108023-c5249f4df085"
@@ -70,71 +83,47 @@ export default function Register() {
             </div>
           </div>
 
-          {/* RIGHT FORM */}
           <div className="col-md-6 p-5">
-            <h3 className="text-center mb-4 fw-bold">
-              <i className="bi bi-person-plus-fill me-2 text-success"></i>
-              Register
-            </h3>
+            <h3 className="text-center mb-4 fw-bold">Register</h3>
 
-            {/* EMAIL */}
-            <div className="input-group mb-3">
-              <span className="input-group-text">
-                <i className="bi bi-envelope-fill"></i>
-              </span>
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Email address"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-            </div>
+            <input
+              className="form-control mb-3"
+              placeholder="Full Name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
 
-            {/* PASSWORD */}
-            <div className="input-group mb-4">
-              <span className="input-group-text">
-                <i className="bi bi-lock-fill"></i>
-              </span>
-              <input
-                type="password"
-                className="form-control"
-                placeholder="Password (min 6 chars)"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
+            <input
+              className="form-control mb-3"
+              placeholder="Mobile Number"
+              value={mobile}
+              maxLength={10}
+              onChange={e => setMobile(e.target.value.replace(/\D/g, ""))}
+            />
+
+            <input
+              className="form-control mb-3"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+
+            <input
+              type="password"
+              className="form-control mb-4"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
 
             <button
-              className="btn btn-success w-100 py-2 fw-semibold"
+              className="btn btn-success w-100"
               onClick={register}
               disabled={loading}
             >
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2"></span>
-                  Registering...
-                </>
-              ) : (
-                <>
-                  <i className="bi bi-check-circle-fill me-2"></i>
-                  Create Account
-                </>
-              )}
+              {loading ? "Registering..." : "Create Account"}
             </button>
-
-            <p className="text-center text-muted mt-3 mb-0">
-              Already have an account?{" "}
-              <span
-                className="text-success fw-semibold"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </span>
-            </p>
           </div>
-
         </div>
       </div>
     </div>

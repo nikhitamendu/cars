@@ -3,18 +3,21 @@ import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminBooking from "./pages/AdminBooking";
-import AdminEnquiry from "./pages/AdminEnquiry"; // or AdminEnquiry if renamed
+import AdminEnquiry from "./pages/AdminEnquiry";
 import CustomerBooking from "./pages/CustomerBooking";
 import Enquiry from "./pages/Enquiry";
 import MyEnquiries from "./pages/MyEnquiries";
 import CarDetails from "./pages/CarDetails";
-
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 const ProtectedRoute = ({ children, allowedRole }) => {
   const { user, role, loading } = useContext(AuthContext);
 
@@ -27,10 +30,10 @@ const ProtectedRoute = ({ children, allowedRole }) => {
 
 export default function App() {
   return (
-    <>
+    <div className="app-wrapper">
       <Navbar />
 
-      <div style={{ paddingTop: "10px" }}>
+      <main className="app-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -101,8 +104,13 @@ export default function App() {
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+
         </Routes>
-      </div>
-    </>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

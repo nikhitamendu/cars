@@ -52,11 +52,20 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  /* ================= KPIs (NO STOCK) ================= */
+  /* ================= KPIs (ONLY CAR + STOCK) ================= */
+
   const totalCars = cars.length;
-  const totalModels = cars.length;
-  const totalBookings = bookings.length;
-  const pendingBookings = bookings.filter(b => b.status === "pending").length;
+
+  const totalModels = new Set(
+    cars.map(c => `${c.brand}-${c.model}`)
+  ).size;
+
+  const totalStock = cars.reduce(
+    (sum, c) => sum + (Number(c.stock) || 0),
+    0
+  );
+
+  const outOfStock = cars.filter(c => (c.stock ?? 0) === 0).length;
 
   /* ================= FUEL TYPE PIE ================= */
   const fuelStats = cars.reduce((acc, car) => {
@@ -69,7 +78,7 @@ export default function AdminDashboard() {
     ([name, value]) => ({ name, value })
   );
 
-  /* ================= BOOKING TREND (7 DAYS) ================= */
+  /* ================= BOOKING TREND (OPTIONAL) ================= */
   const today = new Date();
   const last7Days = [...Array(7)].map((_, i) => {
     const d = new Date();
@@ -102,12 +111,12 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        {/* STATS */}
+        {/* KPI CARDS (ONLY STOCK RELATED) */}
         <div className="row g-3 mb-4">
           <Stat title="Total Cars" value={totalCars} theme={theme} />
           <Stat title="Models" value={totalModels} theme={theme} />
-          <Stat title="Bookings" value={totalBookings} theme={theme} />
-          <Stat title="Pending" value={pendingBookings} color="#f59e0b" theme={theme} />
+          <Stat title="Total Stock" value={totalStock} color="#16a34a" theme={theme} />
+          <Stat title="Out of Stock" value={outOfStock} color="#dc2626" theme={theme} />
         </div>
 
         {/* CHARTS */}
@@ -145,7 +154,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* BOOKING TREND */}
+          {/* BOOKING TREND (KEEP OR REMOVE AS YOU WISH) */}
           <div className="col-md-6">
             <div className="card shadow-sm h-100" style={{ background: theme.card }}>
               <div className="card-body">
@@ -181,10 +190,7 @@ export default function AdminDashboard() {
 function Stat({ title, value, color = "#2563eb", theme }) {
   return (
     <div className="col-6 col-md-3">
-      <div
-        className="card shadow-sm text-center"
-        style={{ background: theme.card }}
-      >
+      <div className="card shadow-sm text-center" style={{ background: theme.card }}>
         <div className="card-body">
           <h6 style={{ color: theme.muted }}>{title}</h6>
           <h2 className="fw-bold" style={{ color }}>{value}</h2>

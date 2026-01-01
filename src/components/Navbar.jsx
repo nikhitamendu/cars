@@ -40,7 +40,7 @@ export default function Navbar() {
                     <NavLink className="nav-link" to="/login">Login</NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink className="nav-link highlight-link" to="/register">
+                    <NavLink className="nav-link" to="/register">
                       Register
                     </NavLink>
                   </li>
@@ -65,7 +65,7 @@ export default function Navbar() {
               {user && role === "admin" && (
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/admin">Cars</NavLink>
+                    <NavLink className="nav-link" to="/admin" end>Cars</NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/admin/dashboard">
@@ -135,14 +135,6 @@ export default function Navbar() {
         .navbar-nav .nav-link.active {
           color: #FFD700;
           border-bottom: 2px solid #FFD700;
-        }
-
-        .highlight-link {
-          background: #FFD700;
-          color: #000 !important;
-          border-radius: 20px;
-          padding: 6px 16px !important;
-          font-weight: 600;
         }
 
         .highlight-link:hover {

@@ -43,7 +43,7 @@ export default function AdminBooking() {
     fetchBookings();
   }, []);
 
-  /* ================= UPDATE STATUS + AUTO STOCK ================= */
+  /* ================= ACCEPT / REJECT + AUTO STOCK ================= */
   const updateStatus = async (booking, status) => {
     try {
       if (status === "accepted") {
@@ -56,12 +56,15 @@ export default function AdminBooking() {
         }
 
         const carData = carSnap.data();
+
         if ((carData.stock || 0) <= 0) {
-          toast.error("No stock available");
+          toast.error("❌ No stock available");
           return;
         }
 
-        await updateDoc(carRef, { stock: carData.stock - 1 });
+        await updateDoc(carRef, {
+          stock: carData.stock - 1,
+        });
       }
 
       await updateDoc(doc(db, "bookings", booking.id), { status });
@@ -85,7 +88,13 @@ export default function AdminBooking() {
       : bookings.filter(b => b.status === filter);
 
   return (
-    <div style={{ backgroundColor: theme.bg, minHeight: "100vh", color: theme.text }}>
+    <div
+      style={{
+        backgroundColor: theme.bg,
+        minHeight: "100vh",
+        color: theme.text,
+      }}
+    >
       <ToastContainer position="top-right" />
 
       <div className="container-fluid py-4">
@@ -93,16 +102,12 @@ export default function AdminBooking() {
         {/* HEADER */}
         <div
           className="card mb-4 border-0"
-          style={{
-            background: theme.header,
-            color: "#fff",
-            borderRadius: 12,
-          }}
+          style={{ background: theme.header, color: "#fff", borderRadius: 12 }}
         >
           <div className="card-body d-flex justify-content-between align-items-center">
             <div>
               <h3 className="fw-bold mb-1">📘 Booking Management</h3>
-              <small>Approve bookings & auto-manage stock</small>
+              <small>Approve or reject bookings</small>
             </div>
 
             <button
@@ -123,14 +128,13 @@ export default function AdminBooking() {
         </div>
 
         {/* FILTERS */}
-        <div className="d-flex gap-2 mb-3 flex-wrap">
+        <div className="d-flex gap-2 mb-4 flex-wrap">
           {["all", "pending", "accepted", "rejected"].map(s => (
             <button
               key={s}
               className="btn btn-sm"
               style={{
-                backgroundColor:
-                  filter === s ? "#2563eb" : theme.card,
+                backgroundColor: filter === s ? "#2563eb" : theme.card,
                 color: filter === s ? "#fff" : theme.text,
                 border: `1px solid ${theme.border}`,
               }}
@@ -141,84 +145,52 @@ export default function AdminBooking() {
           ))}
         </div>
 
-        {/* DESKTOP TABLE */}
-        <div
-          className="card shadow-sm border-0 d-none d-md-block"
-          style={{ background: theme.card }}
-        >
-          <div className="card-body table-responsive">
-            <table className="table align-middle">
-              <thead style={{ backgroundColor: theme.border }}>
-                <tr>
-                  <th>Car</th>
-                  <th>User</th>
-                  <th>Status</th>
-                  <th style={{ width: 180 }}>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {filteredBookings.map(b => (
-                  <tr key={b.id}>
-                    <td><strong>{b.brand} {b.model}</strong></td>
-                    <td style={{ color: theme.muted }}>{b.userId}</td>
-                    <td><StatusBadge status={b.status} /></td>
-                    <td>
-                      {b.status === "pending" ? (
-                        <>
-                          <button
-                            className="btn btn-sm me-2 btn-success"
-                            onClick={() => updateStatus(b, "accepted")}
-                          >
-                            Accept
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => updateStatus(b, "rejected")}
-                          >
-                            Reject
-                          </button>
-                        </>
-                      ) : (
-                        <span className="text-muted">Processed</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* MOBILE CARDS */}
-        <div className="d-md-none">
+        {/* CARD LIST (REPLACES TABLE) */}
+        <div className="row g-3">
           {filteredBookings.map(b => (
-            <div
-              key={b.id}
-              className="card shadow-sm mb-3 border-0"
-              style={{ background: theme.card }}
-            >
-              <div className="card-body">
-                <strong>{b.brand} {b.model}</strong>
-                <p className="small" style={{ color: theme.muted }}>{b.userId}</p>
-                <StatusBadge status={b.status} />
-
-                {b.status === "pending" && (
-                  <div className="d-flex gap-2 mt-2">
-                    <button
-                      className="btn btn-success btn-sm"
-                      onClick={() => updateStatus(b, "accepted")}
-                    >
-                      Accept
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => updateStatus(b, "rejected")}
-                    >
-                      Reject
-                    </button>
+            <div key={b.id} className="col-12 col-md-6 col-lg-4">
+              <div
+                className="card shadow-sm border-0 h-100"
+                style={{ background: theme.card }}
+              >
+                <div className="card-body d-flex flex-column">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <strong>
+                      🚗 {b.brand} {b.model}
+                    </strong>
+                    <StatusBadge status={b.status} />
                   </div>
-                )}
+
+                  <p className="mb-1">
+                    <strong>Customer:</strong>{" "}
+                    {b.userName || "N/A"}
+                  </p>
+
+                  <p className="mb-3" style={{ color: theme.muted }}>
+                    <strong>Email:</strong> {b.userEmail}
+                  </p>
+
+                  <div className="mt-auto">
+                    {b.status === "pending" ? (
+                      <div className="d-flex gap-2">
+                        <button
+                          className="btn btn-sm btn-success w-100"
+                          onClick={() => updateStatus(b, "accepted")}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger w-100"
+                          onClick={() => updateStatus(b, "rejected")}
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="text-muted">Processed</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
@@ -227,7 +199,6 @@ export default function AdminBooking() {
         {filteredBookings.length === 0 && (
           <p className="text-muted mt-3">No bookings found.</p>
         )}
-
       </div>
     </div>
   );
@@ -244,7 +215,9 @@ function Stat({ title, value, color, theme }) {
       >
         <div className="card-body">
           <h6 style={{ color: theme.muted }}>{title}</h6>
-          <h3 className="fw-bold" style={{ color }}>{value}</h3>
+          <h3 className="fw-bold" style={{ color }}>
+            {value}
+          </h3>
         </div>
       </div>
     </div>
@@ -261,7 +234,10 @@ function StatusBadge({ status }) {
   return (
     <span
       className="badge"
-      style={{ backgroundColor: colors[status], color: "#fff" }}
+      style={{
+        backgroundColor: colors[status],
+        color: "#fff",
+      }}
     >
       {status}
     </span>

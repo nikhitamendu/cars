@@ -47,22 +47,13 @@ export default function AdminEnquiry() {
     fetchEnquiries();
   }, []);
 
-  /* ================= ACTIONS ================= */
-
-  const markResolved = async (enquiry) => {
-    await updateDoc(doc(db, "enquiries", enquiry.id), {
-      status: enquiry.status === "resolved" ? "open" : "resolved",
-    });
-    fetchEnquiries();
-  };
-
+  /* ================= ADMIN REPLY ================= */
   const sendReply = async (enquiryId) => {
     if (!replyText.trim()) return;
 
     await updateDoc(doc(db, "enquiries", enquiryId), {
       adminReply: replyText,
       repliedAt: serverTimestamp(),
-      status: "resolved",
     });
 
     setReplyText("");
@@ -141,7 +132,7 @@ export default function AdminEnquiry() {
                       color: "#fff",
                     }}
                   >
-                    {e.status || "open"}
+                    {e.status}
                   </span>
                 </div>
 
@@ -153,7 +144,7 @@ export default function AdminEnquiry() {
                   🚗 {e.brand} {e.model}
                 </div>
 
-                {/* MESSAGE */}
+                {/* CUSTOMER MESSAGE */}
                 <div
                   style={{
                     background: darkMode ? "#020617" : "#f1f5f9",
@@ -163,7 +154,8 @@ export default function AdminEnquiry() {
                     lineHeight: 1.5,
                   }}
                 >
-                  {e.message}
+                  <strong>Customer:</strong>
+                  <div>{e.message}</div>
                 </div>
 
                 {/* ADMIN REPLY */}
@@ -183,26 +175,32 @@ export default function AdminEnquiry() {
                   </div>
                 )}
 
+                {/* CUSTOMER FOLLOW-UP */}
+                {e.followUpMessage && (
+                  <div
+                    className="mt-3"
+                    style={{
+                      background: "#0ea5e9",
+                      color: "#fff",
+                      padding: 12,
+                      borderRadius: 8,
+                      fontSize: 14,
+                    }}
+                  >
+                    <strong>Customer Follow-up:</strong>
+                    <div>{e.followUpMessage}</div>
+                  </div>
+                )}
+
                 {/* ACTIONS */}
                 <div className="d-flex gap-2 mt-3 flex-wrap">
                   <button
                     className="btn btn-sm btn-outline-primary"
                     onClick={() =>
-                      setReplyingTo(
-                        replyingTo === e.id ? null : e.id
-                      )
+                      setReplyingTo(replyingTo === e.id ? null : e.id)
                     }
                   >
                     Reply
-                  </button>
-
-                  <button
-                    className="btn btn-sm btn-outline-success"
-                    onClick={() => markResolved(e)}
-                  >
-                    {e.status === "resolved"
-                      ? "Reopen"
-                      : "Mark as Resolved"}
                   </button>
                 </div>
 

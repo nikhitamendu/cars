@@ -8,8 +8,6 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("homeDark") === "true"
   );
-  const [brand, setBrand] = useState("");
-  const [price, setPrice] = useState("");
 
   const navigate = useNavigate();
 
@@ -37,22 +35,10 @@ export default function Home() {
     frame: darkMode ? "#020617" : "#f8fafc",
   };
 
-  /* ================= FILTER ================= */
-  let filteredCars = [...cars];
-
-  if (brand) {
-    filteredCars = filteredCars.filter(
-      c => c.brand?.toLowerCase() === brand.toLowerCase()
-    );
-  }
-
-  if (price === "low") filteredCars.sort((a, b) => a.price - b.price);
-  if (price === "high") filteredCars.sort((a, b) => b.price - a.price);
-
   return (
     <div style={{ background: theme.bg, minHeight: "100vh", color: theme.text }}>
 
-      {/* ================= HERO ================= */}
+      {/* ================= HERO (NAVBAR OVERLAY) ================= */}
       <div
         id="heroCarousel"
         className="carousel slide carousel-fade hero-carousel"
@@ -63,30 +49,17 @@ export default function Home() {
             "https://qz.com/cdn-cgi/image/width=1920,quality=85,format=auto/https://assets.qz.com/media/8829c0e55f0522cea7b589fec420db88.jpg",
             "https://news.dupontregistry.com/wp-content/uploads/2024/01/download-2024-01-25T133212.738.jpeg",
             "https://lapoloin.s3.ap-south-1.amazonaws.com/20251014162459/000-Best-Luxury-Cars-to-Buy.jpg",
-            "https://images.hindustantimes.com/auto/auto-images/bmw/i7/exterior_bmw-i7_front-left-side_600x400.jpg",
           ].map((img, i) => (
             <div key={i} className={`carousel-item ${i === 0 ? "active" : ""}`}>
-              <img
-                src={img}
-                alt="Luxury Cars"
-                className="d-block w-100 hero-img"
-              />
-
-              {/* Overlay */}
+              <img src={img} className="hero-img" alt="Luxury Cars" />
               <div className="hero-overlay" />
 
               <div className="carousel-caption text-start">
-                <h1 className="fw-bold display-4">
-                  Premium Car Dealership
-                </h1>
-
-                <p className="lead mb-4">
-                  Luxury • Performance • Comfort
-                </p>
-
+                <h1 className="fw-bold display-4">Elite Motors</h1>
+                <p className="lead mb-4">Luxury • Performance • Comfort</p>
                 <a
                   href="#collection"
-                  className="btn btn-warning btn-lg px-4 rounded-pill fw-semibold"
+                  className="btn btn-warning btn-lg rounded-pill fw-semibold px-4"
                 >
                   Explore Collection
                 </a>
@@ -94,36 +67,15 @@ export default function Home() {
             </div>
           ))}
         </div>
-
-        <button
-          className="carousel-control-prev"
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide="prev"
-        >
-          <span className="carousel-control-prev-icon" />
-        </button>
-
-        <button
-          className="carousel-control-next"
-          type="button"
-          data-bs-target="#heroCarousel"
-          data-bs-slide="next"
-        >
-          <span className="carousel-control-next-icon" />
-        </button>
       </div>
 
-      {/* ================= CONTENT ================= */}
+      {/* ================= CARS ================= */}
       <div id="collection" className="container py-5">
 
-        {/* HEADER */}
-        <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 className="fw-bold">🚗 Explore Cars</h2>
-            <p style={{ color: theme.muted }}>
-              Choose your perfect ride
-            </p>
+            <p style={{ color: theme.muted }}>Choose your perfect ride</p>
           </div>
 
           <button
@@ -134,173 +86,121 @@ export default function Home() {
           </button>
         </div>
 
-        {/* FILTERS */}
-        <div className="card shadow-sm mb-4" style={{ background: theme.card }}>
-          <div className="card-body row g-3">
-            <div className="col-md-4">
-              <select
-                className="form-select"
-                value={brand}
-                onChange={e => setBrand(e.target.value)}
-              >
-                <option value="">All Brands</option>
-                {[...new Set(cars.map(c => c.brand))].map(b => (
-                  <option key={b}>{b}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <select
-                className="form-select"
-                value={price}
-                onChange={e => setPrice(e.target.value)}
-              >
-                <option value="">Default Price</option>
-                <option value="low">Low → High</option>
-                <option value="high">High → Low</option>
-              </select>
-            </div>
-
-            <div className="col-md-4">
-              <button
-                className="btn btn-outline-secondary w-100"
-                onClick={() => {
-                  setBrand("");
-                  setPrice("");
-                }}
-              >
-                Reset Filters
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ================= CAR GRID ================= */}
         <div className="row g-4">
-          {filteredCars.map(car => (
-            <div key={car.id} className="col-12 col-sm-6 col-lg-4">
-              <div
-                className="card h-100 border-0"
-                style={{
-                  background: darkMode
-                    ? "linear-gradient(180deg, #0f172a, #020617)"
-                    : "#ffffff",
-                  borderRadius: 18,
-                  overflow: "hidden",
-                  boxShadow: darkMode
-                    ? "0 20px 40px rgba(0,0,0,.6)"
-                    : "0 15px 30px rgba(0,0,0,.15)",
-                  transition: "all .35s ease",
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = "translateY(-10px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 30px 60px rgba(37,99,235,.35)";
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = darkMode
-                    ? "0 20px 40px rgba(0,0,0,.6)"
-                    : "0 15px 30px rgba(0,0,0,.15)";
-                }}
-              >
-                {/* IMAGE */}
+          {cars.map(car => {
+            const stock = car.stock ?? 0;
+            const inStock = stock > 0;
+
+            return (
+              <div key={car.id} className="col-12 col-sm-6 col-lg-4">
                 <div
+                  className="card h-100 border-0"
                   style={{
-                    height: 230,
-                    background: theme.frame,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 14,
-                    position: "relative",
+                    background: theme.card,
+                    borderRadius: 18,
+                    overflow: "hidden",
+                    boxShadow: "0 15px 30px rgba(0,0,0,.15)",
                   }}
                 >
-                  <img
-                    src={car.images?.[0] || "https://via.placeholder.com/400x250"}
-                    alt="car"
+                  {/* IMAGE */}
+                  <div
                     style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                      background:
-                        "linear-gradient(90deg, #2563eb, #1e40af)",
-                      color: "#fff",
-                      padding: "6px 14px",
-                      borderRadius: 20,
-                      fontSize: 13,
-                      fontWeight: 600,
+                      height: 230,
+                      background: theme.frame,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      position: "relative",
                     }}
                   >
-                    ₹{car.price?.toLocaleString()}
-                  </span>
-                </div>
+                    <img
+                      src={car.images?.[0]}
+                      alt="car"
+                      style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                    />
 
-                {/* BODY */}
-                <div className="card-body d-flex flex-column">
-                  <h5 className="fw-bold mb-1">
-                    {car.brand} {car.model}
-                  </h5>
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        background: "#2563eb",
+                        color: "#fff",
+                        padding: "6px 14px",
+                        borderRadius: 20,
+                        fontWeight: 600,
+                        fontSize: 13,
+                      }}
+                    >
+                      ₹{car.price?.toLocaleString()}
+                    </span>
+                  </div>
 
-                  <p className="small mb-3" style={{ color: theme.muted }}>
-                    {car.description
-                      ? car.description.slice(0, 90) + "…"
-                      : "Luxury vehicle with premium features"}
-                  </p>
+                  {/* BODY */}
+                  <div className="card-body d-flex flex-column">
+                    <h5 className="fw-bold">{car.brand} {car.model}</h5>
 
-                  <button
-                    className="btn mt-auto"
-                    style={{
-                      background:
-                        "linear-gradient(90deg, #2563eb, #1e40af)",
-                      color: "#fff",
-                      borderRadius: 12,
-                      fontWeight: 600,
-                      border: "none",
-                    }}
-                    onClick={() => navigate(`/car/${car.id}`)}
-                  >
-                    View Details
-                  </button>
+                    <p className="small mb-2" style={{ color: theme.muted }}>
+                      {car.description?.slice(0, 90) || "Premium luxury vehicle"}…
+                    </p>
+
+                    {/* STOCK */}
+                    <p
+                      className="fw-semibold mb-3"
+                      style={{ color: inStock ? "#16a34a" : "#dc2626" }}
+                    >
+                      {inStock ? `In Stock (${stock})` : "Out of Stock"}
+                    </p>
+
+                    <button
+                      disabled={!inStock}
+                      className="btn mt-auto"
+                      style={{
+                        background: inStock ? "#2563eb" : "#94a3b8",
+                        color: "#fff",
+                        borderRadius: 12,
+                        fontWeight: 600,
+                      }}
+                      onClick={() => inStock && navigate(`/car/${car.id}`)}
+                    >
+                      {inStock ? "View Details" : "Sold Out"}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-
-        {filteredCars.length === 0 && (
-          <p className="text-center mt-5" style={{ color: theme.muted }}>
-            No cars match your filters.
-          </p>
-        )}
       </div>
+
+      {/* ================= FOOTER (HOME ONLY) ================= */}
+      <footer className="home-footer">
+        <div className="container text-center">
+          <h6 className="fw-bold mb-1">Elite Motors</h6>
+          <p className="small mb-2">Premium cars • Trusted service</p>
+
+          <div className="d-flex justify-content-center gap-4 small">
+            <span>About</span>
+            <span>Contact</span>
+          </div>
+
+          <p className="small mt-3 mb-0">
+            © {new Date().getFullYear()} Elite Motors
+          </p>
+        </div>
+      </footer>
 
       {/* ================= STYLES ================= */}
       <style>{`
-        html {
-          scroll-behavior: smooth;
-        }
-
-        /* HERO FIX */
         .hero-carousel,
         .hero-carousel .carousel-item {
-          min-height: 100svh;
+          height: 100vh;
         }
 
         .hero-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center;
         }
 
         .hero-overlay {
@@ -308,25 +208,24 @@ export default function Home() {
           inset: 0;
           background: linear-gradient(
             to bottom,
-            rgba(0,0,0,.45),
+            rgba(0,0,0,.4),
             rgba(0,0,0,.75)
           );
         }
 
-        /* MOBILE */
-        @media (max-width: 768px) {
-          .hero-carousel,
-          .hero-carousel .carousel-item {
-            min-height: 85svh;
-          }
+        .home-footer {
+          background: #020617;
+          color: #e5e7eb;
+          padding: 40px 0;
+        }
 
-          .hero-img {
-            object-position: center top;
-          }
+        .home-footer span {
+          cursor: pointer;
+          color: #94a3b8;
+        }
 
-          .carousel-caption h1 {
-            font-size: 2.2rem;
-          }
+        .home-footer span:hover {
+          color: #ffffff;
         }
       `}</style>
     </div>
