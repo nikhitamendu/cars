@@ -5,10 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [cars, setCars] = useState([]);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("homeDark") === "true"
-  );
-
   const navigate = useNavigate();
 
   /* ================= FETCH ================= */
@@ -20,212 +16,213 @@ export default function Home() {
     fetchCars();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("homeDark", darkMode);
-  }, [darkMode]);
-
-  /* ================= THEME ================= */
-  const theme = {
-    bg: darkMode
-      ? "radial-gradient(circle at top, #020617, #000)"
-      : "#f4f6fb",
-    card: darkMode ? "#0f172a" : "#ffffff",
-    text: darkMode ? "#e5e7eb" : "#020617",
-    muted: darkMode ? "#94a3b8" : "#64748b",
-    frame: darkMode ? "#020617" : "#f8fafc",
-  };
-
   return (
-    <div style={{ background: theme.bg, minHeight: "100vh", color: theme.text }}>
+    <div style={{ background: "#f4f6fb" }}>
 
-      {/* ================= HERO (NAVBAR OVERLAY) ================= */}
-      <div
-        id="heroCarousel"
-        className="carousel slide carousel-fade hero-carousel"
-        data-bs-ride="carousel"
-      >
-        <div className="carousel-inner">
-          {[
-            "https://qz.com/cdn-cgi/image/width=1920,quality=85,format=auto/https://assets.qz.com/media/8829c0e55f0522cea7b589fec420db88.jpg",
-            "https://news.dupontregistry.com/wp-content/uploads/2024/01/download-2024-01-25T133212.738.jpeg",
-            "https://lapoloin.s3.ap-south-1.amazonaws.com/20251014162459/000-Best-Luxury-Cars-to-Buy.jpg",
-          ].map((img, i) => (
-            <div key={i} className={`carousel-item ${i === 0 ? "active" : ""}`}>
-              <img src={img} className="hero-img" alt="Luxury Cars" />
-              <div className="hero-overlay" />
+      {/* ================= HERO ================= */}
+      <div className="hero-wrapper">
+        {/* Desktop Image */}
+        <img
+          src="https://qz.com/cdn-cgi/image/width=1920,quality=85,format=auto/https://assets.qz.com/media/8829c0e55f0522cea7b589fec420db88.jpg"
+          alt="Luxury Cars"
+          className="hero-image hero-desktop"
+        />
 
-              <div className="carousel-caption text-start">
-                <h1 className="fw-bold display-4">Elite Motors</h1>
-                <p className="lead mb-4">Luxury • Performance • Comfort</p>
-                <a
-                  href="#collection"
-                  className="btn btn-warning btn-lg rounded-pill fw-semibold px-4"
-                >
-                  Explore Collection
-                </a>
+        {/* Mobile Image */}
+        <img
+          src="https://images.unsplash.com/photo-1603386329225-868f9b1ee6c9?q=80&w=1080&auto=format&fit=crop"
+          alt="Luxury Cars Mobile"
+          className="hero-image hero-mobile"
+        />
+
+        <div className="hero-content">
+          <h1>Elite Motors</h1>
+          <p>Luxury • Performance • Comfort</p>
+
+          <a href="#collection" className="hero-btn">
+            Explore Collection →
+          </a>
+        </div>
+      </div>
+
+      {/* ================= CARS ================= */}
+      <div id="collection" className="container py-4">
+        <div className="mb-3">
+          <h4 className="fw-bold mb-1">🚗 Explore Cars</h4>
+          <p className="text-muted small mb-0">
+            Choose your perfect ride
+          </p>
+        </div>
+
+        <div className="row g-3">
+          {cars.map(car => (
+            <div key={car.id} className="col-12 col-sm-6 col-lg-4">
+              <div className="card border-0 shadow-sm h-100 rounded-4">
+
+                <div className="car-img-box">
+                  <img src={car.images?.[0]} alt="car" />
+                  <span>₹{car.price?.toLocaleString()}</span>
+                </div>
+
+                <div className="card-body">
+                  <h6 className="fw-bold mb-1">
+                    {car.brand} {car.model}
+                  </h6>
+
+                  <p className="small text-muted mb-3">
+                    {car.description?.slice(0, 80)}…
+                  </p>
+
+                  <button
+                    className="btn btn-primary btn-sm w-100"
+                    onClick={() => navigate(`/car/${car.id}`)}
+                  >
+                    View Details
+                  </button>
+                </div>
+
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ================= CARS ================= */}
-      <div id="collection" className="container py-5">
-
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <div>
-            <h2 className="fw-bold">🚗 Explore Cars</h2>
-            <p style={{ color: theme.muted }}>Choose your perfect ride</p>
-          </div>
-
-          <button
-            className="btn btn-outline-secondary btn-sm"
-            onClick={() => setDarkMode(!darkMode)}
-          >
-            {darkMode ? "☀ Light" : "🌙 Dark"}
-          </button>
-        </div>
-
-        <div className="row g-4">
-          {cars.map(car => {
-            const stock = car.stock ?? 0;
-            const inStock = stock > 0;
-
-            return (
-              <div key={car.id} className="col-12 col-sm-6 col-lg-4">
-                <div
-                  className="card h-100 border-0"
-                  style={{
-                    background: theme.card,
-                    borderRadius: 18,
-                    overflow: "hidden",
-                    boxShadow: "0 15px 30px rgba(0,0,0,.15)",
-                  }}
-                >
-                  {/* IMAGE */}
-                  <div
-                    style={{
-                      height: 230,
-                      background: theme.frame,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      src={car.images?.[0]}
-                      alt="car"
-                      style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                    />
-
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: 12,
-                        right: 12,
-                        background: "#2563eb",
-                        color: "#fff",
-                        padding: "6px 14px",
-                        borderRadius: 20,
-                        fontWeight: 600,
-                        fontSize: 13,
-                      }}
-                    >
-                      ₹{car.price?.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {/* BODY */}
-                  <div className="card-body d-flex flex-column">
-                    <h5 className="fw-bold">{car.brand} {car.model}</h5>
-
-                    <p className="small mb-2" style={{ color: theme.muted }}>
-                      {car.description?.slice(0, 90) || "Premium luxury vehicle"}…
-                    </p>
-
-                    {/* STOCK */}
-                    <p
-                      className="fw-semibold mb-3"
-                      style={{ color: inStock ? "#16a34a" : "#dc2626" }}
-                    >
-                      {inStock ? `In Stock (${stock})` : "Out of Stock"}
-                    </p>
-
-                    <button
-                      disabled={!inStock}
-                      className="btn mt-auto"
-                      style={{
-                        background: inStock ? "#2563eb" : "#94a3b8",
-                        color: "#fff",
-                        borderRadius: 12,
-                        fontWeight: 600,
-                      }}
-                      onClick={() => inStock && navigate(`/car/${car.id}`)}
-                    >
-                      {inStock ? "View Details" : "Sold Out"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ================= FOOTER (HOME ONLY) ================= */}
-      <footer className="home-footer">
-        <div className="container text-center">
-          <h6 className="fw-bold mb-1">Elite Motors</h6>
-          <p className="small mb-2">Premium cars • Trusted service</p>
-
-          <div className="d-flex justify-content-center gap-4 small">
-            <span>About</span>
-            <span>Contact</span>
-          </div>
-
-          <p className="small mt-3 mb-0">
-            © {new Date().getFullYear()} Elite Motors
-          </p>
-        </div>
-      </footer>
-
       {/* ================= STYLES ================= */}
       <style>{`
-        .hero-carousel,
-        .hero-carousel .carousel-item {
+        /* ================= HERO ================= */
+        .hero-wrapper {
+          position: relative;
           height: 100vh;
+          background: #020617;
+          overflow: hidden;
         }
 
-        .hero-img {
+        .hero-image {
+          position: absolute;
+          inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
 
-        .hero-overlay {
+        .hero-mobile {
+          display: none;
+        }
+
+        .hero-wrapper::after {
+          content: "";
           position: absolute;
           inset: 0;
-          background: linear-gradient(
-            to bottom,
-            rgba(0,0,0,.4),
-            rgba(0,0,0,.75)
-          );
+          background: rgba(0,0,0,.55);
         }
 
-        .home-footer {
-          background: #020617;
-          color: #e5e7eb;
-          padding: 40px 0;
+        .hero-content {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding-left: 6%;
+          color: #fff;
+          max-width: 520px;
         }
 
-        .home-footer span {
-          cursor: pointer;
-          color: #94a3b8;
+        .hero-content h1 {
+          font-size: 3.5rem;
+          font-weight: 800;
+          line-height: 1.1;
         }
 
-        .home-footer span:hover {
+        .hero-content p {
+          font-size: 1.2rem;
+          margin-bottom: 1.6rem;
+        }
+
+        /* HERO BUTTON */
+        .hero-btn {
+          align-self: flex-start;
+          padding: 10px 22px;
+          font-size: 0.95rem;
+          font-weight: 600;
           color: #ffffff;
+          text-decoration: none;
+          border: 1.5px solid rgba(255,255,255,0.8);
+          border-radius: 999px;
+          backdrop-filter: blur(6px);
+          background: rgba(255,255,255,0.08);
+          transition: all 0.25s ease;
+        }
+
+        .hero-btn:hover {
+          background: #ffffff;
+          color: #020617;
+        }
+
+        /* ================= CARDS ================= */
+        .car-img-box {
+          height: 200px;
+          background: #f1f5f9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          border-radius: 16px 16px 0 0;
+        }
+
+        .car-img-box img {
+          max-width: 90%;
+          max-height: 90%;
+          object-fit: contain;
+        }
+
+        .car-img-box span {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: #2563eb;
+          color: #fff;
+          padding: 6px 14px;
+          border-radius: 20px;
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        /* ================= MOBILE (CLEAN & NEAT) ================= */
+        @media (max-width: 768px) {
+          .hero-wrapper {
+            height: 65vh;
+          }
+
+          .hero-desktop {
+            display: none;
+          }
+
+          .hero-mobile {
+            display: block;
+          }
+
+          .hero-content {
+            justify-content: flex-end;
+            padding: 0 1.25rem 2.2rem;
+            text-align: center;
+            align-items: center;
+          }
+
+          .hero-content h1 {
+            font-size: 1.85rem;   /* ↓ refined */
+            line-height: 1.15;
+          }
+
+          .hero-content p {
+            font-size: 0.9rem;    /* ↓ refined */
+            margin-bottom: 1.1rem;
+          }
+
+          .hero-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+          }
         }
       `}</style>
     </div>
