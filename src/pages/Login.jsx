@@ -6,19 +6,19 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("customer");
+  const [role, setRole] = useState("customer");//default it is customer
   const [darkMode, setDarkMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);//used fordisable the button and starts loading state
 
   const navigate = useNavigate();
 
-  const login = async () => {
-    setLoading(true);
+  const login = async () => {    //when logun is clicked
+    setLoading(true);       //shows loading and hides button
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate(role === "admin" ? "/admin" : "/");
+      navigate(role === "admin" ? "/admin" : "/");  //if role is admin go to home page
     } catch {
-      alert("Invalid credentials");
+      alert("Fill the details properly");
     } finally {
       setLoading(false);
     }

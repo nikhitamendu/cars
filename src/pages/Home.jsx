@@ -4,14 +4,14 @@ import { collection, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const [cars, setCars] = useState([]);
+  const [cars, setCars] = useState([]);//store list of cars from firestore
   const navigate = useNavigate();
 
   /* ================= FETCH ================= */
   useEffect(() => {
     const fetchCars = async () => {
-      const snap = await getDocs(collection(db, "cars"));
-      setCars(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const snap = await getDocs(collection(db, "cars"));   //access the cars collection in firstore
+      setCars(snap.docs.map(d => ({ id: d.id, ...d.data() })));  //converts firestore docs into usable objects
     };
     fetchCars();
   }, []);
@@ -60,17 +60,17 @@ export default function Home() {
               <div className="card border-0 shadow-sm h-100 rounded-4">
 
                 <div className="car-img-box">
-                  <img src={car.images?.[0]} alt="car" />
-                  <span>₹{car.price?.toLocaleString()}</span>
+                  <img src={car.images?.[0]} alt="car" />  {/*display first car image ?. avoid crashing */}
+                  <span>₹{car.price?.toLocaleString()}</span>  {/*format number with commas */}
                 </div>
 
                 <div className="card-body">
                   <h6 className="fw-bold mb-1">
-                    {car.brand} {car.model}
+                    {car.brand} {car.model}      {/*displays car brand and model*/ }
                   </h6>
 
                   <p className="small text-muted mb-3">
-                    {car.description?.slice(0, 80)}…
+                    {car.description?.slice(0, 80)}…      {/*limit text to 80 characters */}
                   </p>
 
                   <button
@@ -111,7 +111,7 @@ export default function Home() {
 
         .hero-wrapper::after {
           content: "";
-          position: absolute;
+          position: absolute;   
           inset: 0;
           background: rgba(0,0,0,.55);
         }
@@ -175,7 +175,7 @@ export default function Home() {
           max-height: 90%;
           object-fit: contain;
         }
-
+/*=========badges=========*/
         .car-img-box span {
           position: absolute;
           top: 10px;

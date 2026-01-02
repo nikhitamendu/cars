@@ -5,7 +5,7 @@ export default function Footer() {
   const location = useLocation();
 
   // ✅ Footer ONLY on Home page
-  if (location.pathname !== "/") return null;
+  if (location.pathname !== "/") return null;//home page kakunda em avchina dont display
 
   return (
     <footer className="ultra-footer">
@@ -39,7 +39,7 @@ export default function Footer() {
           white-space: nowrap;
         }
 
-        .footer-line svg {
+        .footer-line svg {  
           color: #FFD700;
         }
 

@@ -178,7 +178,6 @@ export default function Admin() {
       <ToastContainer />
 
       <div className="container py-4">
-
         {/* HEADER */}
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3 className="fw-bold">🚘 Admin – Cars</h3>
@@ -207,15 +206,6 @@ export default function Admin() {
               >
                 + Add Car
               </button>
-            </div>
-
-            <div className="col-md-4 text-center mt-3 mt-md-0">
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/741/741407.png"
-                alt="Add Car"
-                className="img-fluid"
-                style={{ maxHeight: 140 }}
-              />
             </div>
           </div>
         </div>
@@ -335,12 +325,25 @@ export default function Admin() {
                     />
                   </div>
 
+                  {/* ✅ IMAGE ONLY FILE INPUT */}
                   <div className="col-12">
                     <input
                       type="file"
                       multiple
+                      accept="image/*"
                       className="form-control"
-                      onChange={e => setNewImages(e.target.files)}
+                      onChange={e => {
+                        const files = Array.from(e.target.files);
+                        const imagesOnly = files.filter(file =>
+                          file.type.startsWith("image/")
+                        );
+
+                        if (imagesOnly.length !== files.length) {
+                          toast.error("Only image files are allowed");
+                        }
+
+                        setNewImages(imagesOnly);
+                      }}
                     />
                   </div>
                 </div>

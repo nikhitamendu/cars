@@ -31,13 +31,13 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const res = await createUserWithEmailAndPassword(auth, email, password);  //creates user in firebase authentication
 
       await updateProfile(res.user, {
-        displayName: name,
+        displayName: name,  //saves the user name in firebase auth profile
       });
 
-      await setDoc(doc(db, "users", res.user.uid), {
+      await setDoc(doc(db, "users", res.user.uid), {    //creates a firestore document
         name,
         mobile,
         email,
@@ -72,7 +72,7 @@ export default function Register() {
             />
             <div
               className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center text-white"
-              style={{ background: "rgba(0,0,0,0.55)" }}
+              style={{ background: "rgba(0,0,0,0.55)" }}  //darkoverlay over
             >
               <div className="text-center px-3">
                 <h3 className="fw-bold">Join Us Today</h3>

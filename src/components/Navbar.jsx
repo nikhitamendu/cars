@@ -3,7 +3,18 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
-import { FaCarSide, FaTachometerAlt } from "react-icons/fa";
+import {
+  FaCarSide,
+  FaTachometerAlt,
+  FaSignInAlt,
+  FaUserPlus,
+  FaClipboardList,
+  FaEnvelopeOpenText,
+  FaCar,
+  FaCalendarCheck,
+  FaQuestionCircle,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 export default function Navbar() {
   const { user, role } = useContext(AuthContext);
@@ -15,6 +26,7 @@ export default function Navbar() {
         <div className="container-fluid px-4">
 
           {/* Brand */}
+          {/* by clicking on logo redirect to home page */}
           <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
             <FaCarSide size={28} className="brand-icon" />
             <span className="brand-text">Elite Motors</span>
@@ -34,64 +46,75 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto align-items-lg-center gap-2">
 
+              {/* NOT LOGGED IN */}
               {!user && (
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/login">Login</NavLink>
+                    <NavLink className="nav-link" to="/login">
+                      <FaSignInAlt className="me-1" /> Login
+                    </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/register">
-                      Register
+                      <FaUserPlus className="me-1" /> Register
                     </NavLink>
                   </li>
                 </>
               )}
 
+              {/* CUSTOMER */}
               {user && role === "customer" && (
                 <>
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/my-bookings">
-                      My Bookings
+                      <FaClipboardList className="me-1" /> My Bookings
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/my-enquiries">
-                      My Enquiries
+                      <FaEnvelopeOpenText className="me-1" /> My Enquiries
                     </NavLink>
                   </li>
                 </>
               )}
 
+              {/* ADMIN */}
               {user && role === "admin" && (
                 <>
                   <li className="nav-item">
-                    <NavLink className="nav-link" to="/admin" end>Cars</NavLink>
+                    <NavLink className="nav-link" to="/admin" end>
+                      <FaCar className="me-1" /> Cars
+                    </NavLink>
                   </li>
+
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/admin/dashboard">
                       <FaTachometerAlt className="me-1" /> Dashboard
                     </NavLink>
                   </li>
+
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/admin-bookings">
-                      Bookings
+                      <FaCalendarCheck className="me-1" /> Bookings
                     </NavLink>
                   </li>
+
                   <li className="nav-item">
                     <NavLink className="nav-link" to="/admin-enquiries">
-                      Enquiries
+                      <FaQuestionCircle className="me-1" /> Enquiries
                     </NavLink>
                   </li>
                 </>
               )}
 
+              {/* LOGOUT */}
               {user && (
                 <li className="nav-item">
                   <button
                     className="btn btn-outline-danger btn-sm logout-btn"
                     onClick={() => signOut(auth)}
                   >
-                    Logout
+                    <FaSignOutAlt className="me-1" /> Logout
                   </button>
                 </li>
               )}
@@ -135,10 +158,6 @@ export default function Navbar() {
         .navbar-nav .nav-link.active {
           color: #FFD700;
           border-bottom: 2px solid #FFD700;
-        }
-
-        .highlight-link:hover {
-          background: #ffcc00;
         }
 
         .logout-btn {

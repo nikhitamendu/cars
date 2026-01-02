@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext } from "react";  //access global auth state
 import { AuthContext } from "./context/AuthContext";
 
 import Navbar from "./components/Navbar";
@@ -18,14 +18,14 @@ import MyEnquiries from "./pages/MyEnquiries";
 import CarDetails from "./pages/CarDetails";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
-const ProtectedRoute = ({ children, allowedRole }) => {
-  const { user, role, loading } = useContext(AuthContext);
+const ProtectedRoute = ({ children, allowedRole }) => {     //this is a route guard
+  const { user, role, loading } = useContext(AuthContext);  //it wraps pages that should only be accesible when user logged inand user has correct role
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading) return <div className="text-center mt-5">Loading...</div>;//prevents redirect
   if (!user) return <Navigate to="/login" replace />;
-  if (allowedRole && role !== allowedRole) return <Navigate to="/" replace />;
+  if (allowedRole && role !== allowedRole) return <Navigate to="/" replace />;  // if requirements doesnt match redirect to home page
 
-  return children;
+  return children;  //if all checks pass render the actual page
 };
 
 export default function App() {
